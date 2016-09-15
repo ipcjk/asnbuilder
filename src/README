@@ -1,0 +1,29 @@
+
+this tool will download the assigned as-numbers from the IANA-website
+and will generate as-path-lists for
+
+brocade mlxe, mlx, cer or comparable routers.
+
+these lists will / can block NIC regions by as-numbers,
+doing like this, will save FIB-entries of your routers.
+
+attention: you will need to install a default route to reach the
+blocked regions. either install a route manually or ask your uplink
+providers to announce bgp default routes to your router.
+
+This list shall match as second of the last rules, after accepting the
+default route, the ASN of your uplink and  the AS-numbers you may want
+to reach with specific preferences or you may risk blocking your uplink
+or connectivity.
+
+Include the list inside a route-map second to the last
+
+# Block e.g. APNIC
+route-map uplink-in deny 50
+match as-path region-summary
+
+# Accept all other routes (e.g. ARIN, RIPE)
+route-map uplink-in permit 50
+set local-preference 90
+
+
