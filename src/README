@@ -26,4 +26,35 @@ match as-path region-summary
 route-map uplink-in permit 50
 set local-preference 90
 
+# Build
+go build main.go
 
+# Options and params
+./main -help
+Usage of ./main:
+  -acltitle string
+    	Title for generated as-path list (default "region-summary")
+  -permitOrDeny int
+    	Deny = 0, Permit = 1 (default 1)
+  -region string
+    	Comma separated list with region for generated prefix
+  -summary
+    	Print summary of downloaded lists only
+
+# Run example
+./main -region "APNIC"
+ip as-path access-list region-summary permit _173$
+ip as-path access-list region-summary permit _681$
+ip as-path access-list region-summary permit _1221$
+ip as-path access-list region-summary permit _1233$
+ip as-path access-list region-summary permit _1237$
+ip as-path access-list region-summary permit _1250$
+ip as-path access-list region-summary permit _1659$
+ip as-path access-list region-summary permit _1704$
+ip as-path access-list region-summary permit _176[8-9]$
+ip as-path access-list region-summary permit _1781$
+ip as-path access-list region-summary permit _1851$
+ip as-path access-list region-summary permit _2042$
+ip as-path access-list region-summary permit _2144$
+ip as-path access-list region-summary permit _2385$
+ip as-path access-list region-summary permit _249[7-9]|_25[0-1][0-9]|_252[0-8]$

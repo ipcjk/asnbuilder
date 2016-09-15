@@ -16,7 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	numberRange "./numberRange"
+	"./numberRange"
 )
 
 var NicToASN map[string][]string
@@ -45,7 +45,7 @@ func init() {
 }
 
 func main() {
-	log.Println("Building ASN-prefixlists per NIC")
+	// log.Println("Building ASN-prefixlists per NIC")
 	var wg sync.WaitGroup
 	var mt sync.Mutex
 
@@ -53,7 +53,7 @@ func main() {
 		wg.Add(1)
 		go func(asnURI string) {
 			defer wg.Done()
-			log.Printf("downloading %s\n", asnURI)
+			// log.Printf("downloading %s\n", asnURI)
 
 			resp, err := http.Get(asnURI)
 			if err != nil {
@@ -76,7 +76,7 @@ func main() {
 }
 
 func printSummary() {
-	for k, _ := range NicToASN {
+	for k := range NicToASN {
 		log.Printf("%s [%d table entries]\n", k, len(NicToASN[k]))
 	}
 }
@@ -96,13 +96,13 @@ func generatePrefixList() {
 				}
 				if start == end {
 					fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
-						strconv.Itoa(start))
+						"_" + strconv.Itoa(start))
 				} else {
 					fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
 						numberRange.GetRegex(start, end))
 				}
 			} else {
-				fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], v)
+				fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], "_" + v)
 			}
 		}
 	}
