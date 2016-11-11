@@ -122,7 +122,9 @@ func map_asn_to_nic(ASN io.ReadCloser) {
 		if strings.HasPrefix(record[1], "Assigned by ") {
 			nic := strings.TrimPrefix(record[1], "Assigned by ")
 			NicToASN[nic] = append(NicToASN[nic], record[0])
-		}
+		} else if strings.HasPrefix(record[1], "Reserved") || strings.HasPrefix(record[1], "Unallocated") {
+			NicToASN["bogons"] = append(NicToASN["bogons"], record[0])
+ 		}
 	}
 }
 
