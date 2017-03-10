@@ -16,7 +16,9 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sort"
 	"./numberRange"
+	"os"
 )
 
 var NicToASN map[string][]string
@@ -28,6 +30,7 @@ var flagPermitOrDeny int
 var flagAclTitle string
 var flagSummaryOnly bool
 var flagNICsParsed []string
+var flagFilename string
 var PermitOrDenyArr [2]string = [2]string{"deny", "permit"}
 
 var asnList []string = []string{
@@ -40,6 +43,7 @@ func init() {
 	flag.StringVar(&flagAclTitle, "acltitle", "region-summary", "Title for generated as-path list")
 	flag.BoolVar(&flagSummaryOnly, "summary", false, "Print summary of downloaded lists only")
 	flag.IntVar(&flagPermitOrDeny, "permitOrDeny", 1, "Deny = 0, Permit = 1")
+	flag.StringVar(&flagFilename, "filename", "", "Output file, else stdout")
 	flag.Parse()
 	flagNICsParsed = strings.Split(flagNicRegion, ",")
 }
@@ -57,7 +61,7 @@ func main() {
 
 			resp, err := http.Get(asnURI)
 			if err != nil {
-				log.Fatal("Cant download as numbers from IANA")
+				log.Fatal("Cant open as numbers from IANA")
 			}
 
 			mt.Lock()
@@ -71,7 +75,16 @@ func main() {
 	if flagSummaryOnly == true || len(flagNICsParsed) == 0 {
 		printSummary()
 	} else {
-		generatePrefixList()
+		if flagFilename == "" {
+			generatePrefixList(os.Stdout)
+		} else {
+			outputStream, err := os.Create(flagFilename)
+			if err != nil {
+				log.Fatal(err)
+			}
+			generatePrefixList(outputStream)
+			outputStream.Close()
+		}
 	}
 }
 
@@ -81,7 +94,8 @@ func printSummary() {
 	}
 }
 
-func generatePrefixList() {
+func generatePrefixList(outputStream io.Writer ) {
+	var prefixLists []string
 	for _, nic := range flagNICsParsed {
 		for _, v := range NicToASN[nic] {
 			if strings.Contains(v, "-") {
@@ -95,16 +109,24 @@ func generatePrefixList() {
 					panic(err)
 				}
 				if start == end {
-					fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
-						"_" + strconv.Itoa(start))
+					prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
+						"_" + strconv.Itoa(start)))
 				} else {
-					fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
-						numberRange.GetRegex(start, end))
+					prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
+						numberRange.GetRegex(start, end)))
 				}
 			} else {
-				fmt.Printf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], "_" + v)
+				prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], "_" + v))
 			}
 		}
+	}
+	sort.Slice(prefixLists,
+		func(i,j int) bool {
+			return prefixLists[i] < prefixLists[j]
+		});
+
+	for _, v := range prefixLists {
+		fmt.Fprint(outputStream, v)
 	}
 }
 
