@@ -1,6 +1,6 @@
 /*
  * ip as-path regex builder
- * Jörg Kost, joerg.kost@gmx.com, jk@premium-datacenter.de
+ * Jörg Kost, joerg.kost@gmx.com, jk@ip-clear.de
  *
  */
 

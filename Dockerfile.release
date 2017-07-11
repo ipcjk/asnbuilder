@@ -1,0 +1,11 @@
+FROM alpine:latest
+RUN apk update
+RUN apk  --no-cache upgrade
+RUN apk  --no-cache add unzip ca-certificates openssl
+WORKDIR /asnbuilder
+RUN wget https://github.com/ipcjk/asnbuilder/releases/download/0.1/release.tar.gz
+RUN tar xfz release.tar.gz --strip 1
+RUN rm release.tar.gz
+RUN chmod 0755 /mlxsh/asnbuilder
+RUN chown root:root -R /asnbuilder
+MAINTAINER Joerg Kost <jk@ip-clear.de>
