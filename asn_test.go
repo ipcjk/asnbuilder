@@ -1,4 +1,4 @@
-package main
+package asnbuilder
 
 import (
 	numberRange "./numberRange"

@@ -1,0 +1,52 @@
+8151,Uninet S.A. de C.V., MX
+39891,ALJAWWALSTC-AS, SA
+6327,SHAW - Shaw Communications Inc., CA
+8551,BEZEQ-INTERNATIONAL-AS Bezeqint Internet Backbone, IL
+47331,TTNET, TR
+4538,ERX-CERNET-BKB China Education and Research Network Center, CN
+9808,CMNET-GD Guangdong Mobile Communication Co.Ltd., CN
+9394,CTTNET China TieTong Telecommunications Corporation, CN
+7552,VIETEL-AS-AP Viettel Group, VN
+7545,TPG-INTERNET-AP TPG Telecom Limited, AU
+45899,VNPT-AS-VN VNPT Corp, VN
+4766,KIXS-AS-KR Korea Telecom, KR
+17974,TELKOMNET-AS2-AP PT Telekomunikasi Indonesia, ID
+11492,CABLEONE - CABLE ONE INC., US
+18566,MEGAPATH5-US - MegaPath Corporation, US
+4755,TATACOMM-AS TATA Communications formerly VSNL is Leading ISP, IN
+9498,BBIL-AP BHARTI Airtel Ltd., IN
+20115,CHARTER-20115 - Charter Communications, US
+11830,Instituto Costarricense de Electricidad y Telecom., CR
+23969,TOT-NET TOT Public Company Limited, TH
+12389,ROSTELECOM-AS, RU
+6389,BELLSOUTH-NET-BLK - AT&T Corp., US
+45090,CNNIC-TENCENT-NET-AP Shenzhen Tencent Computer Systems Company Limited, CN
+9121,TTNET, TR
+12479,UNI2-AS, ES
+22773,ASN-CXA-ALL-CCI-22773-RDC - Cox Communications Inc., US
+28573,CLARO S.A., BR
+11172,Alestra S. de R.L. de C.V., MX
+32098,TRANSTELCO-INC - Transtelco Inc, US
+33363,BHN-33363 - Charter Communications Inc, US
+45609,BHARTI-MOBILITY-AS-AP Bharti Airtel Ltd. AS for GPRS Service, IN
+30036,MEDIACOM-ENTERPRISE-BUSINESS - Mediacom Communications Corp, US
+45271,ICLNET-AS-AP Idea Cellular Limited, IN
+13361,VODAFONE-AS-AP Vodafone Australia Pty Ltd, AU
+9829,BSNL-NIB National Internet Backbone, IN
+3462,HINET Data Communication Business Group, TW
+9605,DOCOMO NTT DOCOMO INC., JP
+13206,REALMOVE-AS-AP Realmove Company Limited, TH
+55430,STARHUB-NGNBN Starhub Ltd, SG
+24173,NETNAM-AS-AP Netnam Company, VN
+13142,MOBIFONE-AS-VN MOBIFONE Corporation, VN
+17622,CNCGROUP-GZ China Unicom Guangzhou network, CN
+21003,PINKU-DAIMARI Pinku Daimari | CHD-IX, GB
+4808,CHINA169-BJ China Unicom Beijing Province Network, CN
+54540,INCERO-HVVC - HIVELOCITY  Inc., US
+3651,SPRINT-BB6 - Sprint, US
+10507,SPCS - Sprint Personal Communications Systems, US
+17552,TRUE-AS-AP True Internet Co. Ltd., TH
+210035,PINKU-DAIMA45609RI Pinku Daimari | CHD-IX, GB
+10143,EXETEL-AS-AP Exetel Pty Ltd, AU
+17072,TOTAL PLAY TELECOMUNICACIONES SA DE CV, MX
+48503,TELE2-KZ Tele2 Kazakhstan, KZ

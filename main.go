@@ -4,33 +4,31 @@
  *
  */
 
-package main
+package asnbuilder
 
 import (
+	"./numberRange"
 	"encoding/csv"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
-	"sort"
-	"./numberRange"
-	"os"
 )
 
 var NicToASN map[string][]string
-var fmt_asPathACL = "ip as-path access-list %s %s %s$\n"
+var fmtAsPathACL = "ip as-path access-list %s %s %s$\n"
 
 /* Command line parameters */
-var flagNicRegion string
 var flagPermitOrDeny int
-var flagAclTitle string
+var flagAclTitle, flagFilename, flagNicRegion, asnFile string
 var flagSummaryOnly bool
 var flagNICsParsed []string
-var flagFilename string
 var PermitOrDenyArr [2]string = [2]string{"deny", "permit"}
 
 var asnList []string = []string{
@@ -44,31 +42,43 @@ func init() {
 	flag.BoolVar(&flagSummaryOnly, "summary", false, "Print summary of downloaded lists only")
 	flag.IntVar(&flagPermitOrDeny, "permitOrDeny", 1, "Deny = 0, Permit = 1")
 	flag.StringVar(&flagFilename, "filename", "", "Output file, else stdout")
+	flag.StringVar(&asnFile, "custom", "", "file with custom ASNs for list-generation")
+
 	flag.Parse()
 	flagNICsParsed = strings.Split(flagNicRegion, ",")
 }
 
 func main() {
-	// log.Println("Building ASN-prefixlists per NIC")
 	var wg sync.WaitGroup
 	var mt sync.Mutex
 
-	for _, v := range asnList {
-		wg.Add(1)
-		go func(asnURI string) {
-			defer wg.Done()
-			// log.Printf("downloading %s\n", asnURI)
+	if asnFile != "" {
+		f, err := os.Open(asnFile)
+		if err != nil {
+			log.Fatalf("Cant open as number file %s: %s", asnFile, err)
+		}
+		mapAsnToNic(f)
+		defer f.Close()
+	}
 
-			resp, err := http.Get(asnURI)
-			if err != nil {
-				log.Fatal("Cant open as numbers from IANA")
-			}
+	if asnFile == "" {
+		for _, v := range asnList {
+			wg.Add(1)
+			go func(asnURI string) {
+				defer wg.Done()
+				// log.Printf("downloading %s\n", asnURI)
 
-			mt.Lock()
-			map_asn_to_nic(resp.Body)
-			mt.Unlock()
-			resp.Body.Close()
-		}(v)
+				resp, err := http.Get(asnURI)
+				if err != nil {
+					log.Fatal("Cant open as numbers from IANA")
+				}
+
+				mt.Lock()
+				mapAsnToNic(resp.Body)
+				mt.Unlock()
+				resp.Body.Close()
+			}(v)
+		}
 	}
 
 	wg.Wait()
@@ -94,7 +104,7 @@ func printSummary() {
 	}
 }
 
-func generatePrefixList(outputStream io.Writer ) {
+func generatePrefixList(outputStream io.Writer) {
 	var prefixLists []string
 	for _, nic := range flagNICsParsed {
 		for _, v := range NicToASN[nic] {
@@ -109,28 +119,28 @@ func generatePrefixList(outputStream io.Writer ) {
 					panic(err)
 				}
 				if start == end {
-					prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
-						"_" + strconv.Itoa(start)))
+					prefixLists = append(prefixLists, fmt.Sprintf(fmtAsPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
+						"_"+strconv.Itoa(start)))
 				} else {
-					prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
+					prefixLists = append(prefixLists, fmt.Sprintf(fmtAsPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny],
 						numberRange.GetRegex(start, end)))
 				}
 			} else {
-				prefixLists = append(prefixLists, fmt.Sprintf(fmt_asPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], "_" + v))
+				prefixLists = append(prefixLists, fmt.Sprintf(fmtAsPathACL, flagAclTitle, PermitOrDenyArr[flagPermitOrDeny], "_"+v))
 			}
 		}
 	}
 	sort.Slice(prefixLists,
-		func(i,j int) bool {
+		func(i, j int) bool {
 			return prefixLists[i] < prefixLists[j]
-		});
+		})
 
 	for _, v := range prefixLists {
 		fmt.Fprint(outputStream, v)
 	}
 }
 
-func map_asn_to_nic(ASN io.ReadCloser) {
+func mapAsnToNic(ASN io.ReadCloser) {
 	r := csv.NewReader(ASN)
 	for {
 		record, err := r.Read()
@@ -138,7 +148,7 @@ func map_asn_to_nic(ASN io.ReadCloser) {
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal( err)
 		}
 
 		if strings.HasPrefix(record[1], "Assigned by ") {
@@ -146,9 +156,8 @@ func map_asn_to_nic(ASN io.ReadCloser) {
 			NicToASN[nic] = append(NicToASN[nic], record[0])
 		} else if strings.HasPrefix(record[1], "Reserved") || strings.HasPrefix(record[1], "Unallocated") {
 			NicToASN["bogons"] = append(NicToASN["bogons"], record[0])
- 		}
+		} else  {
+			NicToASN["custom"] = append(NicToASN["custom"], record[0])
+		}
 	}
 }
-
-
-
