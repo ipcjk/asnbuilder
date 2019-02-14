@@ -4,7 +4,7 @@
  *
  */
 
-package asnbuilder
+package main
 
 import (
 	"./numberRange"
