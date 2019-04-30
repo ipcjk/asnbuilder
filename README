@@ -5,7 +5,8 @@ and will generate as-path-lists for
 brocade mlxe, mlx, cer or comparable routers.
 
 these lists will / can block NIC regions by as-numbers,
-doing like this, will save FIB-entries of your routers.
+doing like this, will save FIB-entries of your routers any may help you
+survice the 512K or 768K router limits in future.
 
 attention: you will need to install a default route to reach the
 blocked regions. either install a route manually or ask your uplink
